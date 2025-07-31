@@ -1,6 +1,6 @@
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.user import User
+from app.models import User
 from passlib.hash import bcrypt
 
 async def create_user(db: AsyncSession, username: str, email: str, password: str):
