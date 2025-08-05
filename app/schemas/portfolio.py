@@ -1,6 +1,15 @@
 from pydantic import BaseModel
 
-class PortfolioCreate(BaseModel):
+class PortfolioBase(BaseModel):
+    symbol: str
+    amount: float
+
+class PortfolioCreate(PortfolioBase):
+    user_id: int
+    symbol: str
+    amount: int
+    
+class PortfolioUpdate(PortfolioBase):
     symbol: str
     amount: int
 
