@@ -12,4 +12,4 @@ Base = declarative_base()
 # FastAPI 用的 DB 連線依賴
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
     async with SessionLocal() as session:
-        yield session
+        yield session # 安全讓 session 在使用完自動釋放

@@ -25,3 +25,14 @@ async def add_portfolio(
     await db.commit()
     await db.refresh(new_portfolio)
     return new_portfolio
+
+@router.get("/me", response_model=list[PortfolioOut])
+async def get_my_portfolio(
+    db: AsyncSession = Depends(get_async_session),
+    current_user: User = Depends(get_current_user)
+):
+    result = await db.execute(
+        select(Portfolio).where(Portfolio.user_id == current_user.id)
+    )
+    portfolios = result.scalars().all()
+    return portfolios
