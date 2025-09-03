@@ -7,6 +7,7 @@ from app.auth.auth_bearer import get_current_user  # <-- JWT解出當前使用�
 from app.models.user import User
 from sqlalchemy.future import select
 from fastapi import Path
+from app.services.price_service import fetch_price
 
 router = APIRouter(prefix="/portfolio", tags=["Portfolio"])
 
@@ -75,3 +76,35 @@ async def delete_portfolio(
     await db.delete(portfolio)
     await db.commit()
     return {"msg": f"資產 ID {portfolio_id} 已成功刪除"}
+
+@router.get("/summary")
+async def get_portfolio_summary(
+    db: AsyncSession = Depends(get_async_session),
+    current_user: User = Depends(get_current_user)
+):
+    result = await db.execute(
+        select(Portfolio).where(Portfolio.user_id == current_user.id)
+    )
+    portfolios = result.scalars().all()
+
+    summary = []
+    total_value = 0.0
+
+    for item in portfolios:
+        try:
+            price = await fetch_price(item.symbol) # 獲取庫藏貨幣當前價格
+            value = price * item.amount
+            summary.append({
+                "symbol": item.symbol,
+                "amount": item.amount,
+                "price": price,
+                "value": round(value, 2)
+            })
+            total_value += value
+        except Exception as e:
+            continue  # 若某幣種查不到價格則略過
+
+    return {
+        "assets": summary,
+        "total_value": round(total_value, 2)
+    }

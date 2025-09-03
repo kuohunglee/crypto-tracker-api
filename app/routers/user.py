@@ -6,7 +6,7 @@ from app.services.user_service import create_user, authenticate_user
 from app.auth.auth_handler import create_access_token
 from app.auth.auth_bearer import get_current_user
 from fastapi.security import OAuth2PasswordRequestForm
-router = APIRouter()
+router = APIRouter(prefix="/users", tags=["users"])
 
 # Dependency
 async def get_db():
