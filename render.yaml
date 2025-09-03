@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: crypto-api
+    env: python
+    plan: free
+    buildCommand: ""
+    startCommand: bash start.sh
+    envVars:
+      - key: DATABASE_URL
+        value: sqlite+aiosqlite:///./crypto.db
